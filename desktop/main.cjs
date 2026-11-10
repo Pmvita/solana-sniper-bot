@@ -198,6 +198,15 @@ function writeBotCommand(command) {
   });
 }
 
+function resolveWindowIcon() {
+  const ico = path.join(__dirname, "icon.ico");
+  const png = path.join(__dirname, "icon.png");
+  if (process.platform === "win32" && fs.existsSync(ico)) return ico;
+  if (fs.existsSync(png)) return png;
+  if (fs.existsSync(ico)) return ico;
+  return undefined;
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1220,
@@ -206,6 +215,7 @@ function createWindow() {
     minHeight: 680,
     title: "Solana Sniper Bot",
     backgroundColor: "#0f1419",
+    icon: resolveWindowIcon(),
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,

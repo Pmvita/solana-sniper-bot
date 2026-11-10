@@ -20,6 +20,8 @@ Get installers from **[GitHub Releases](https://github.com/Pmvita/solana-sniper-
 
 Install / open the app, generate a burner wallet, fund with a small amount of SOL, set your RPC, then Start.
 
+Releases from **v1.0.1** ship a custom Solana/sniper app icon (installer + taskbar/dock).
+
 ### macOS Gatekeeper (unsigned builds)
 
 Mac releases are **not Apple-notarized**. On first launch:
