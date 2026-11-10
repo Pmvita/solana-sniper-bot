@@ -1,0 +1,51 @@
+{
+  "name": "solana-sniper-bot",
+  "version": "1.0.0",
+  "description": "Desktop Solana Pump.fun sniper — live PumpPortal feed, hot-wallet signing, PumpPortal trade-local swaps, TP/SL exits",
+  "license": "UNLICENSED",
+  "private": false,
+  "author": "Pmvita",
+  "type": "module",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "desktop": "electron .",
+    "dev": "tsx src/index.ts",
+    "listen": "tsx src/cli/listen-live.ts",
+    "offline-smoke": "tsx src/cli/offline-smoke.ts",
+    "runner": "tsx src/bot/runner.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@solana/spl-token": "^0.4.0",
+    "@solana/web3.js": "^1.95.0",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.0",
+    "electron": "^33.2.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pmvita/solana-sniper-bot.git"
+  },
+  "keywords": [
+    "solana",
+    "pump.fun",
+    "pumpportal",
+    "sniper",
+    "electron",
+    "trading-bot"
+  ]
+}

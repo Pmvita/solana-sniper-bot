@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solana Sniper Bot</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div>
+          <h1>Solana Sniper</h1>
+          <p class="sub">
+            Live PumpPortal feed · PumpPortal trade-local swaps · burner hot wallet
+          </p>
+        </div>
+        <div class="status-pill" id="statusPill">Stopped</div>
+      </header>
+
+      <section class="wallet-banner">
+        <strong>Live = real money.</strong> Use a <strong>burner wallet</strong> only — never your
+        main savings. Most snipes lose capital. This is not financial advice.
+      </section>
+
+      <section class="wallet panel">
+        <div class="panel-head">
+          <h2>Hot wallet</h2>
+          <div class="btn-row wrap">
+            <button id="genWalletBtn" class="primary tiny-pad">Generate</button>
+            <button id="importKeyBtn" class="ghost tiny-pad">Import key</button>
+            <button id="importFileBtn" class="ghost tiny-pad">Import JSON</button>
+            <button id="copyAddrBtn" class="ghost tiny-pad" disabled>Copy address</button>
+            <button id="refreshWalletBtn" class="ghost tiny-pad">Refresh</button>
+            <button id="disconnectWalletBtn" class="ghost tiny-pad" disabled>Disconnect</button>
+          </div>
+        </div>
+        <div class="wallet-grid">
+          <div>
+            <div class="label">Status</div>
+            <div id="walletStatus" class="value">No wallet — Generate for Live</div>
+          </div>
+          <div>
+            <div class="label">Address</div>
+            <div id="walletAddress" class="value mono">—</div>
+          </div>
+          <div>
+            <div class="label">Balance</div>
+            <div id="walletBalance" class="value mono">—</div>
+          </div>
+        </div>
+        <p class="hint" id="walletHint">
+          Generate → Copy address → fund small SOL from Phantom → set RPC → Mode
+          <strong>Live</strong> → Start. Feed defaults to live PumpPortal (not mock).
+        </p>
+      </section>
+
+      <section class="controls">
+        <label>
+          Mode
+          <select id="mode">
+            <option value="live" selected>Live (real money)</option>
+            <option value="paper">Paper (safe sim)</option>
+          </select>
+        </label>
+        <label>
+          Risk profile
+          <select id="profile">
+            <option value="sniper" selected>sniper</option>
+            <option value="conservative">conservative</option>
+            <option value="moderate">moderate</option>
+            <option value="aggressive">aggressive</option>
+            <option value="paper">paper</option>
+          </select>
+        </label>
+        <label>
+          Paper balance (SOL)
+          <input id="balance" type="number" min="0.01" step="0.1" value="1" />
+        </label>
+        <label class="check">
+          <input id="mockFeed" type="checkbox" />
+          Mock feed (offline only)
+        </label>
+        <label class="check">
+          <input id="dryRun" type="checkbox" />
+          Dry-run (build/sim, no broadcast)
+        </label>
+        <div class="btn-row">
+          <button id="startBtn" class="primary">Start</button>
+          <button id="stopBtn" class="ghost" disabled>Stop</button>
+        </div>
+      </section>
+
+      <section class="live-warn" id="liveWarn">
+        <strong>LIVE</strong> listens on <code>wss://pumpportal.fun/api/data</code> and executes via
+        <code>POST https://pumpportal.fun/api/trade-local</code> (you sign + send on your RPC).
+        Jupiter is fallback only. Requires hot wallet + RPC. Confirm Start carefully.
+      </section>
+
+      <section class="settings">
+        <h2>Settings</h2>
+        <label>
+          RPC URL
+          <input
+            id="rpcUrl"
+            type="text"
+            placeholder="https://api.mainnet-beta.solana.com"
+          />
+        </label>
+        <p class="hint">
+          Prefer a private RPC (Helius/Triton) for landing. Secrets stay in userData /
+          local <code>.env</code> — never commit them.
+        </p>
+      </section>
+
+      <section class="grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Open positions / PnL</h2>
+            <div id="balLine" class="meta">Balance —</div>
+          </div>
+          <div id="positions" class="positions empty">No open positions</div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Live log</h2>
+            <button id="clearLog" class="tiny">Clear</button>
+          </div>
+          <pre id="log" class="log"></pre>
+        </div>
+      </section>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

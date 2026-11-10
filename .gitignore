@@ -1,0 +1,36 @@
+# secrets & local env
+.env
+.env.local
+.env.*.local
+
+# deps & build
+node_modules/
+dist/
+desktop/dist/
+out/
+*.tsbuildinfo
+
+# wallets / keys
+wallets/
+*.key
+*.pem
+*.enc
+id.json
+keypair.json
+hot-wallet.enc
+hot-wallet.meta.json
+
+# logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# electron
+*.asar
+
+# IDE / coverage
+.idea/
+.vscode/
+coverage/
+.vitest/
