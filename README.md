@@ -1,10 +1,31 @@
 # Solana Sniper Bot
 
-**Windows-first Electron desktop app** that snipes new [Pump.fun](https://pump.fun) tokens using the live [PumpPortal](https://pumpportal.fun) data + trade APIs.
+**Electron desktop app** that snipes new [Pump.fun](https://pump.fun) tokens using the live [PumpPortal](https://pumpportal.fun) data + trade APIs.
 
 > **Live = real money.** Most snipes lose capital (rugs, latency, MEV, failed txs). This is research software, not financial advice. Use a **burner wallet** only.
 
 **License:** [Proprietary — All Rights Reserved](./LICENSE). Public viewing allowed; no grant to copy, modify, distribute, or use commercially without written permission from **Pmvita**.
+
+---
+
+## Download (end users — no npm)
+
+Get installers from **[GitHub Releases](https://github.com/Pmvita/solana-sniper-bot/releases)**:
+
+| Platform | File |
+|---|---|
+| **Windows** | `Solana Sniper Bot-*-Windows-x64.exe` (NSIS installer) or `*-portable.exe` |
+| **macOS Apple Silicon** | `Solana Sniper Bot-*-macOS-arm64.dmg` |
+| **macOS Intel** | `Solana Sniper Bot-*-macOS-x64.dmg` |
+
+Install / open the app, generate a burner wallet, fund with a small amount of SOL, set your RPC, then Start.
+
+### macOS Gatekeeper (unsigned builds)
+
+Mac releases are **not Apple-notarized**. On first launch:
+
+1. Right-click the app → **Open** → confirm, **or**
+2. System Settings → Privacy & Security → allow the blocked app
 
 ---
 
@@ -30,12 +51,12 @@
 
 ---
 
-## Quick start (Live desktop)
+## Developers only
 
 ```bash
 git clone https://github.com/Pmvita/solana-sniper-bot.git
 cd solana-sniper-bot
-copy .env.example .env
+cp .env.example .env   # Windows: copy .env.example .env
 npm install
 npm run desktop
 ```
@@ -62,6 +83,16 @@ Offline mock smoke (not the product path):
 ```bash
 npm run offline-smoke
 ```
+
+### Package locally
+
+```bash
+npm run dist:win    # Windows NSIS + portable → release/
+npm run dist:mac    # macOS dmg/zip (requires macOS host or CI)
+npm run dist        # current platform
+```
+
+CI builds Windows + macOS on tag `v*` and attaches artifacts to the GitHub Release.
 
 ---
 
@@ -132,7 +163,9 @@ Response: raw serialized `VersionedTransaction` bytes → sign with hot keypair 
 
 | Command | Purpose |
 |---|---|
-| `npm run desktop` | Electron app (primary) |
+| *(Releases)* | End-user installers — no npm |
+| `npm run desktop` | Electron app (developers) |
+| `npm run dist` / `dist:win` / `dist:mac` | Package installers |
 | `npm run listen` | Live WS smoke (real events) |
 | `npm run dev` | CLI bot |
 | `npm run offline-smoke` | Mock paper path (dev only) |

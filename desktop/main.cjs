@@ -11,7 +11,72 @@ let mainWindow = null;
 let botProc = null;
 let botRl = null;
 
-const root = path.join(__dirname, "..");
+/**
+ * App root: project root in dev; asar.unpacked in packaged builds so the
+ * child runner can be spawned outside the virtual asar filesystem.
+ */
+function getAppRoot() {
+  if (!app.isPackaged) {
+    return path.join(__dirname, "..");
+  }
+  const appPath = app.getAppPath();
+  if (appPath.includes(`${path.sep}app.asar`)) {
+    return appPath.replace(`${path.sep}app.asar`, `${path.sep}app.asar.unpacked`);
+  }
+  return appPath;
+}
+
+function resolveRunnerSpawn() {
+  const root = getAppRoot();
+
+  if (app.isPackaged) {
+    const runner = path.join(root, "dist", "bot", "runner.js");
+    if (!fs.existsSync(runner)) {
+      throw new Error(`Packaged runner missing: ${runner}`);
+    }
+    return {
+      execPath: process.execPath,
+      args: [runner],
+      cwd: root,
+      env: {
+        ...process.env,
+        ELECTRON_RUN_AS_NODE: "1",
+      },
+    };
+  }
+
+  const tsxCli = path.join(root, "node_modules", "tsx", "dist", "cli.mjs");
+  const runnerTs = path.join(root, "src", "bot", "runner.ts");
+  const runnerJs = path.join(root, "dist", "bot", "runner.js");
+
+  if (fs.existsSync(tsxCli) && fs.existsSync(runnerTs)) {
+    return {
+      execPath: process.execPath,
+      args: [tsxCli, runnerTs],
+      cwd: root,
+      env: {
+        ...process.env,
+        ELECTRON_RUN_AS_NODE: "1",
+      },
+    };
+  }
+
+  if (fs.existsSync(runnerJs)) {
+    return {
+      execPath: process.execPath,
+      args: [runnerJs],
+      cwd: root,
+      env: {
+        ...process.env,
+        ELECTRON_RUN_AS_NODE: "1",
+      },
+    };
+  }
+
+  throw new Error(
+    "Bot runner not found. Run `npm install` (dev) or ensure dist/bot/runner.js exists."
+  );
+}
 
 function sendToRenderer(channel, payload) {
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -45,15 +110,22 @@ function stopBotProcess() {
 function startBotProcess() {
   stopBotProcess();
 
-  const tsxCli = path.join(root, "node_modules", "tsx", "dist", "cli.mjs");
-  const runner = path.join(root, "src", "bot", "runner.ts");
+  let spawnSpec;
+  try {
+    spawnSpec = resolveRunnerSpawn();
+  } catch (err) {
+    sendToRenderer("bot:event", {
+      type: "log",
+      level: "error",
+      message: err instanceof Error ? err.message : String(err),
+      ts: Date.now(),
+    });
+    return;
+  }
 
-  botProc = spawn(process.execPath, [tsxCli, runner], {
-    cwd: root,
-    env: {
-      ...process.env,
-      ELECTRON_RUN_AS_NODE: "1",
-    },
+  botProc = spawn(spawnSpec.execPath, spawnSpec.args, {
+    cwd: spawnSpec.cwd,
+    env: spawnSpec.env,
     stdio: ["pipe", "pipe", "pipe"],
   });
 

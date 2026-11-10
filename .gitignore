@@ -8,6 +8,7 @@ node_modules/
 dist/
 desktop/dist/
 out/
+release/
 *.tsbuildinfo
 
 # wallets / keys

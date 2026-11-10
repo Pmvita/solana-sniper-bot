@@ -16,7 +16,11 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dist": "npm run build && electron-builder --publish never",
+    "dist:win": "npm run build && electron-builder --win --publish never",
+    "dist:mac": "npm run build && electron-builder --mac --publish never",
+    "pack": "npm run build && electron-builder --dir --publish never"
   },
   "dependencies": {
     "@solana/spl-token": "^0.4.0",
@@ -29,6 +33,7 @@
     "@types/node": "^22.0.0",
     "@types/ws": "^8.5.0",
     "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"
@@ -47,5 +52,94 @@
     "sniper",
     "electron",
     "trading-bot"
-  ]
+  ],
+  "build": {
+    "appId": "com.pmvita.solana-sniper-bot",
+    "productName": "Solana Sniper Bot",
+    "copyright": "Copyright © Pmvita. All Rights Reserved.",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "desktop/**/*",
+      "dist/**/*",
+      "package.json",
+      "!dist/**/*.test.js",
+      "!dist/**/*.test.d.ts",
+      "!dist/**/*.map",
+      "!**/*.tsbuildinfo"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "dist/**/*",
+      "node_modules/**/*"
+    ],
+    "npmRebuild": false,
+
+    "extraMetadata": {
+      "main": "desktop/main.cjs"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-Windows-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Solana Sniper Bot"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-Windows-${arch}-portable.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.finance",
+      "identity": null,
+      "artifactName": "${productName}-${version}-macOS-${arch}.${ext}",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-macOS-${arch}.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Finance",
+      "artifactName": "${productName}-${version}-Linux-${arch}.${ext}"
+    },
+    "publish": null
+  }
 }
